@@ -1,4 +1,4 @@
 command flagtest:
     trigger:
-        send "%location of player%"
+        send "%block at player%"
         
