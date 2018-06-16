@@ -2,4 +2,4 @@ command flagtest:
     trigger:
         send "%raw name of block at player%"
         send "%damage values of block at player%"
-        send "%colour of block at player%"
+        send "%facing of block at player%"
