@@ -1,0 +1,769 @@
+function debugSend(p: player,message: text):
+    if {debug} is true:
+        send {_message} to {_p}
+
+function parseRegion(tags: texts, p: player):
+    debugSend({_p},"-----------------------")
+    debugSend({_p}, "parseRegion has started") 
+    clear {_tag}
+    loop {_tags::*}:
+        set {_tag} to loop-value
+        set {_data} to "true"
+        if {_tag} is not "+-+-+":
+            if {_tag} contains "+":
+                set {_temp::*} to {_tag} split at "+"
+                set {_tag} to {_temp::1}
+                if {_tag} isn't "name":
+                    if {_tag} isn't "warp":
+                        set {_data} to {_temp::2} parsed as number
+                else:
+                    set {_data} to {_temp::2}
+            #DEFAULT values
+            else if "%{_tag}%" is "time":
+                set {_data} to 0
+            else if "%{_tag}%" is "score":
+                set {_data} to 0
+            else if "%{_tag}%" is "timed":
+                set {_data} to 0
+            else if "%{_tag}%" is "scored":
+                set {_data} to 0
+            else if "%{_tag}%" is "countdown":
+                set {_data} to 5
+            else if "%{_tag}%" is "updraft":
+                set {_data} to 5
+            else if "%{_tag}%" is "boost":
+                set {_data} to 5               
+            debugSend({_p}, "%{_tag}%: %{_data}%")
+            set {region.%{_p}%::%{_tag}%} to {_data}
+
+function clearPlayerData(p: player):
+    debugSend({_p}, "-----------------------")
+    debugSend({_p}, "clearing player data" )
+    clear {checkpoint.%{_p}%.name}
+    clear {checkpoint.%{_p}%.started}
+    clear {checkpoint.%{_p}%.start_time}
+    clear {checkpoint.%{_p}%.finish}
+    clear {checkpoint.%{_p}%.timed}
+    clear {checkpoint.%{_p}%.countdown}
+    clear {checkpoint.%{_p}%.scored}
+    clear {checkpoint.%{_p}%.time}
+    clear {checkpoint.%{_p}%.score}
+    clear {checkpoint.%{_p}%.last}
+    clear {checkpoint.%{_p}%.number}
+    clear {checkpoint.%{_p}%.num}
+    clear {checkpoint.%{_p}%.offset}
+    clear {checkpoint.%{_p}%.game}
+    clear {checkpoint.%{_p}%.begun}    
+    clear {checkpoint.%{_p}%}
+
+
+function verifyFinish(p: player) :: Boolean:
+    if {region.%{_p}%::finish} exists:
+        #if sequential finish
+        debugSend({_p},"finish tag detected")
+        if {region.%{_p}%::finish} is not true:
+            debugSend({_p}, "current Number: %{checkpoint.%{_p}%.number}%" )
+            debugSend({_p}, "finish Number: %{region.%{_p}%::finish}%" )
+            set {_foundNumber} to {region.%{_p}%::finish}
+            set {_currentNumber} to {checkpoint.%{_p}%.number} + 1
+            if {_currentNumber} = {_foundNumber}:
+                debugSend({_p}, "numbers are sequential" )
+                debugSend({_p}, "returning true")
+                return true 
+    debugSend({_p}, "numbers are not sequential" )
+    debugSend({_p}, "returning false")   
+    return false
+
+function verifySequence(p: player, regionText: text) :: Boolean:
+    debugSend({_p}, "-----------------------" )
+    debugSend({_p}, "Verification has started" )
+    #this function triggers on entering a checkpoint region and verifies that the sequence is correct (not touching checkpoints out of order)
+    set {_check} to true
+
+
+    #if sequential
+    if {region.%{_p}%::num} exists:
+        #if is next in line
+        debugSend({_p}, "current Number: %{checkpoint.%{_p}%.number}%" )
+        debugSend({_p}, "found Number: %{region.%{_p}%::num}%" )
+        set {_foundNumber} to {region.%{_p}%::num}
+        set {_currentNumber} to {checkpoint.%{_p}%.number} + 1
+        if {_currentNumber} = {_foundNumber}:
+            add 1 to {checkpoint.%{_p}%.number}
+            debugSend({_p}, "numbers are sequential" )
+            debugSend({_p}, "setting check to true")
+            set {_check} to true
+        else:
+            debugSend({_p}, "numbers are not sequential" )
+            debugSend({_p}, "setting check to false")
+            set {_check} to false         
+                
+    #override to true if repeatable
+    if {checkpoint.%{_p}%.last} exists:
+        debugSend({_p}, "last region: " )
+        debugSend({_p}, "%{checkpoint.%{_p}%.last}%" ) 
+        debugSend({_p}, "current region:" )
+        debugSend({_p}, "%{_regionText}%" )  
+        debugSend({_p}, "last value exists" )
+        if {_regionText} is {checkpoint.%{_p}%.last}:
+            debugSend({_p}, "last value matches" )
+            debugSend({_p}, "setting check to false")
+            set {_check} to false
+        if {region.%{_p}%::repeatable} exists:
+            debugSend({_p}, "repeatable")
+            debugSend({_p}, "setting check to true")
+            set {_check} to true
+                 
+
+        
+    debugSend({_p}, "region name: %{region.%{_p}%::name}%" )
+    debugSend({_p}, "stored name: %{checkpoint.%{_p}%.name}%" )
+    debugSend({_p}, "verification returns %{_check}%")
+    return {_check}
+
+function compareTrack(name: text, name2: text) :: Boolean:
+    set {_check} to false
+    if {_name} exists:
+        if {_name2} exists:
+            if {_name} is {_name2}:
+                set {_check} to true
+                debugSend({_p}, "Name does not match current track" )
+    return {_check}    
+
+
+
+
+    
+function initTrack(p: player):
+    debugSend({_p}, "-----------------------" )
+    debugSend({_p}, "initTrack has started" )
+    #this function triggers if start is detected and applies the track start modifiers
+    set {checkpoint.%{_p}%.started} to now
+    if {region.%{_p}%::timed} exists:
+        set {checkpoint.%{_p}%.timed} to true
+        set {checkpoint.%{_p}%.offset} to {region.%{_p}%::timed}
+    if {region.%{_p}%::finish} exists:
+        set {checkpoint.%{_p}%.finish} to {region.%{_p}%::finish}
+    if {region.%{_p}%::scored} exists:
+        set {checkpoint.%{_p}%.scored} to true
+        set {checkpoint.%{_p}%.score} to {region.%{_p}%::scored}
+    if {region.%{_p}%::countdown} exists:
+        set {checkpoint.%{_p}%.countdown} to true
+        set {checkpoint.%{_p}%.offset} to {region.%{_p}%::countdown}
+    if {region.%{_p}%::num} exists:
+        if {checkpoint.%{_p}%.number} does not exist:
+            set {checkpoint.%{_p}%.number} to {region.%{_p}%::num}
+    if {region.%{_p}%::name} exists:
+        set {checkpoint.%{_p}%.name} to {region.%{_p}%::name}
+
+function sendTitle(p: player, title: text, subtitle: text = "", actionbar: text = ""):
+    if {_title} is "":
+        set {_title} to " "
+    send {_p} title {_title} with subtitle {_subtitle} 
+    if {_actionbar} is not "":
+        set action bar of {_p} to {_actionbar}
+
+function getDeltaTime(p:player) :: text:
+    set {_startingTime} to {checkpoint.%{_p}%.started}
+    set {_diagnostic} to {checkpoint.%{_p}%.started}
+    set {_offset} to {checkpoint.%{_p}%.offset}
+    set {_countdown} to {checkpoint.%{_p}%.countdown}
+    #negative time amounts do not work in Timespan data type hence this if statement
+    if {_offset} > 0:
+        set {_offset} to "%{_offset}% seconds" parsed as Timespan
+        #invert math in case of counting down
+        if {_countdown} is true:
+            add {_offset} to {_startingTime}
+        else:
+            subtract {_offset} from {_startingTime}
+    else:
+        set {_offset} to abs({_offset})
+        set {_offset} to "%{_offset}% seconds" parsed as Timespan    
+        #invert math in case of counting down
+        if {_countdown} is true:        
+            subtract {_offset} from {_startingTime}
+        else:
+            add {_offset} to {_startingTime}            
+    set {_deltaTime} to difference between {_startingTime} and now
+    set {_diagnostic} to difference between {_diagnostic} and now
+    # debugSend({_p}, "offset: %{checkpoint.%{_p}%.offset}%" )
+    # debugSend({_p}, "time elapsed: %{_diagnostic}%" )
+    #invert negative sign in case we're counting down
+    if {_countdown} is true:
+        if {_startingTime} > now:
+            return "%{_deltaTime}%"
+        else:
+            return "-%{_deltaTime}%"
+    else:
+        if {_startingTime} > now:
+            return "-%{_deltaTime}%"
+        else:
+            return "%{_deltaTime}%"
+
+function formatTimeText(inputText: text) :: text:
+    set {_tooMuch} to false
+    #currently only minute and second times are supported
+    set {_timeText} to "way too long"
+    if {_inputText} contains "hour":
+        set {_tooMuch} to true
+    else if {_inputText} contains "day":
+        set {_tooMuch} to true
+    else if {_inputText} contains "month":
+        set {_tooMuch} to true
+    else if {_inputText} contains "year":
+        set {_tooMuch} to true
+    #lack of centiseconds throws off the reformatting, add them if missing
+    if {_inputText} contains "second":
+        if {_inputText} doesn't contain ".":
+            replace "second" with ".00 second" in {_inputText}
+    if {_tooMuch} is false:
+        #remove and replace redundant information and prepare for splitting
+        replace all "s" and " " with "" in {_inputText}
+        replace "-" with "-and" in {_inputText}
+        replace "hour" and "minute" and "econd" with "" in {_inputText}
+        replace "and" with "." in {_inputText}
+        set {_textSplit::*} to {_inputText} split at "."
+        set {_size} to size of {_textSplit::*}
+        set {_iterator} to {_size}  
+        set {_timeText} to ""
+        set {_used} to 0
+        set {_negative} to false
+        set {_delimiter} to ":"
+        while {_iterator} > 0:
+            set {_value} to {_textSplit::%{_iterator}%}
+            set {_padding} to length of {_value}
+            #delimiter for centiseconds should be "." instead of ":" this is expandable for later support for hours and up
+            if {_used} is 0:
+                set {_delimiter} to "."
+            else:
+                set {_delimiter} to ":"
+            #pad the number to 2 digits with a 0 infront if shorter than 2 digits
+            if {_padding} < 2 :
+                set {_value} to "0%{_value}%"
+            #ignore "-" as that is added later after padding the format to at least minutes   
+            if {_textSplit::%{_iterator}%} is not "-":
+                set {_timeText} to "%{_delimiter}%%{_value}%%{_timeText}%"
+                add 1 to {_used}
+            subtract 1 from {_iterator}
+        #pad the number to at least minutes
+        while {_used} < 3:
+            set {_timeText} to ":00%{_timeText}%"
+            add 1 to {_used}
+        set {_timeText} to "start%{_timeText}%"
+        replace "start:" with "" in {_timeText}
+        #add negative mark if needed
+        if {_inputText} contains "-":
+            set {_timeText} to "-%{_timeText}%"   
+    return {_timeText}
+            
+function applyDeltaOffset(p: player):
+    set {_deltaOffset} to {region.%{_p}%::time}
+    if {_deltaOffset} > 0:
+        add {_deltaOffset} to {checkpoint.%{_p}%.offset}
+    else if {_deltaOffset} < 0:
+        set {_deltaOffset} to abs({_deltaOffset})
+        subtract {_deltaOffset} from {checkpoint.%{_p}%.offset}   
+
+function formatDeltaOffset(p: player) :: text:  
+    set {_deltaOffset} to {region.%{_p}%::time}
+    set {_formattedOffset} to ""
+    if {_deltaOffset} > 0:
+        if {region::countdown} exists:
+            set {_colour} to "&c"
+        else:
+            set {_colour} to "&a"
+        set {_formattedOffset} to "&a+ %{_deltaOffset}% seconds"
+    else if {_deltaOffset} < 0:
+        set {_deltaOffset} to abs({_deltaOffset})
+        if {region::countdown} exists:
+            set {_colour} to "&a"
+        else:
+            set {_colour} to "&c"
+        set {_formattedOffset} to "&c- %{_deltaOffset}% seconds"  
+    return {_formattedOffset} 
+    
+            
+function handleTime(p: player) :: text:
+    # debugSend({_p}, "----------" )
+    debugSend({_p}, "handling time" )
+    # debugSend({_p}, "----------" )
+    set {_deltaOffset} to {region.%{_p}%::time}    
+    applyDeltaOffset({_p})
+    set {_dTime} to getDeltaTime({_p})
+    # debugSend({_p}, "adjusted time: %{_dTime}%" )
+    # debugSend({_p}, "deltaOffset: %{_deltaOffset}%" )
+    set {_formattedTime} to formatTimeText({_dtime})
+    # debugSend({_p}, {_formattedTime})
+    return {_formattedTime}
+
+function formatScoreOffset(p: player) :: text:
+    set {_deltaScore} to {region.%{_p}%::score}
+    if {_deltaScore} > 0:
+        return "&a+ %{_deltaScore}% Points"
+    else if {_deltaScore} < 0:
+        set {_deltaScore} to abs({_deltaScore})
+        return "&c- %{_deltaScore}% Points"
+    return ""
+    
+function handleScore(p: player) :: text:
+    # debugSend({_p}, "----------" )
+    debugSend({_p}, "handling score" )
+    # debugSend({_p}, "----------" )
+    if {checkpoint.%{_p}%.score} doesn't exist:
+        set {checkpoint.%{_p}%.score} to 0
+    if {region.%{_p}%::score} exists:
+        add {region.%{_p}%::score} to {checkpoint.%{_p}%.score}
+    return "&a%{checkpoint.%{_p}%.score}% points"
+
+function compareTimes(value1: text, value2: text) :: Boolean:
+    set {_negative1} to 0
+    set {_negative2} to 0
+    
+    if {_value1} contains "-":
+        set {_negative1} to 1
+    if {_value2} contains "-":
+        set {_negative2} to 1
+    if {_negative1} is {_negative2}:
+        replace "-" with "" in {_value1}
+        replace "-" with "" in {_value2}
+        replace "." with ":" in {_value1}
+        replace "." with ":" in {_value2}
+        set {_valueOneSplit::*} to {_value1} split at ":"
+        set {_valueTwoSplit::*} to {_value2} split at ":"
+        loop {_valueOneSplit::*}:
+            set {_index1} to {_valueOneSplit::%loop-index%} parsed as number
+            set {_index2} to {_valueTwoSplit::%loop-index%} parsed as number
+            if {_index1} > {_index2}:
+                if {_negative1} is 0:
+                    return true
+                    stop loop
+                else:
+                    return false
+                    stop loop
+            else if {_index1} < {_index2}:
+                if {_negative1} is 0:
+                    return false
+                    stop loop
+                else:
+                    return true
+                    stop loop
+    else if {_negative1} is 0:
+        return true
+    else:
+        return false
+    
+    
+    
+    
+    
+function handleHighScore(p: player, scoreText: text) :: text:
+    # debugSend({_p}, "----------" )
+    debugSend({_p}, "handling highscore" )
+    # debugSend({_p}, "----------" )    
+    # debugSend({_p}, "scoreText is: %{_scoreText}%")
+    set {_name} to {checkpoint.%{_p}%.name}
+    set {_size} to size of {checkpoint.%{_name}%.highscore::*}
+    set {_tempText} to {_scoreText}
+    set {_timeBased} to false
+    replace " " with "" in {_tempText}
+    replace "|" with " " in {_tempText}
+    replace "&a" and "&c" and "&4" and "&2" and "&6" with "" in {_tempText}
+    # debugSend({_p},"tempText is: %{_tempText}%")
+    if {_scoreText} contains "|":
+        set {_split::*} to {_tempText} split at " "
+        set {_time} to {_split::1}
+        set {_score} to {_split::2} parsed as number
+    else:
+        set {_time} to {_tempText}
+        set {_score} to {_tempText} parsed as number
+    debugSend({_p},"time is: %{_time}%")
+    if {checkpoint.%{_name}%.highscore::*} doesn't exist:
+        # debugSend({_p}, "no highscore exists, saving this one")
+        # debugSend({_p}, "%{_scoreText}% &f%{_p}%")
+        set {checkpoint.%{_name}%.highscore::1} to "%{_scoreText}% &f%{_p}%"
+    else if {checkpoint.%{_p}%.timed} is true:
+        set {_timeBased} to true
+        set {_timed} to true
+    else if {checkpoint.%{_p}%.countdown} is true:
+        set {_timeBased} to true
+        set {_timed} to false
+    else if {checkpoint.%{_p}%.scored} is true:
+        debugSend({_p}, "timed highscore check started")
+        set {_temp::*} to {checkpoint.%{_name}%.highscore::*}
+        set {_iterator} to 1
+        set {_search} to true
+        while {_iterator} <= 10:
+            set {_index} to {_iterator}
+            add 1 to {_iterator}
+            set {_indexValue} to {checkpoint.%{_name}%.highscore::%{_index}%}
+            # debugSend({_p}, "checking entry %{_index}%")
+            # debugSend({_p}, "indexValue is: %{_indexValue}%")            
+            if {_search} is true:
+                replace " " with "" in {_indexValue}
+                replace "|" with " " in {_indexValue}
+                replace "&a" and "&c" and "&4" and "&2" and "&6" with "" in {_indexValue}
+                
+                set {_indexSplit::*} to {_indexValue} split at " "
+                if {_indexValue} contains "|":
+                    set {_scoreScore} to {_indexSplit::2} parsed as number
+                else:
+                    set {_scoreScore} to {_indexSplit::1} parsed as number
+                # debugSend({_p},"entry score: %{_scoreScore}%")
+                # debugSend({_p}, "comparing %{_scoreScore}% to %{_score}%")
+                if {_scoreScore} < {_score}:
+                    set {_newBigger} to true
+                else:
+                    set {_newBigger} to false
+                if {_newBigger} is true:
+                    # debugSend({_p}, "new score is bigger")
+                    # debugSend({_p}, "new score is %{_scoreText}% &f%{_p}%")
+                    set {_search} to false
+                    set {checkpoint.%{_name}%.highscore::%{_index}%} to "%{_scoreText}% &f%{_p}%"
+                else:
+                    # debugSend({_p}, "new score is lower")
+                if {checkpoint.%{_name}%.highscore::%{_index}%} doesn't exist:
+                    # debugSend({_p}, "highscore is not yet full")
+                    # debugSend({_p}, "new score is %{_scoreText}% &f%{_p}%")
+                    set {_search} to false
+                    set {checkpoint.%{_name}%.highscore::%{_index}%} to "%{_scoreText}% &f%{_p}%"                    
+            else:
+                # debugSend({_p}, "moving other scores")
+                set {_tempIndex} to {_index} - 1
+                if {_temp::%{_tempIndex}%} exists:
+                    set {checkpoint.%{_name}%.highscore::%{_index}%} to {_temp::%{_tempIndex}%}
+                else:
+                    set {_iterator} to 20        
+
+    
+    if {_timeBased} is true:
+        # debugSend({_p}, "timed highscore check started")
+        set {_temp::*} to {checkpoint.%{_name}%.highscore::*}
+        set {_iterator} to 1
+        set {_search} to true
+        while {_iterator} <= 10:
+            set {_index} to {_iterator}
+            add 1 to {_iterator}
+            set {_indexValue} to {checkpoint.%{_name}%.highscore::%{_index}%}
+            # debugSend({_p}, "checking entry %{_index}%")
+            # debugSend({_p}, "indexValue is: %{_indexValue}%")            
+            if {_search} is true:
+                
+                replace " | " with " " in {_indexValue}
+                replace "&a" and "&c" and "&4" and "&2" and "&6" with "" in {_indexValue}
+                
+                set {_indexSplit::*} to {_indexValue} split at " "
+                set {_scoreTime} to {_indexSplit::1}
+                # debugSend({_p},"entry time: %{_scoreTime}%")
+                # debugSend({_p}, "comparing %{_scoreTime}% to %{_time}%")
+                set {_newSmaller} to compareTimes({_scoreTime},{_time})
+                if {_newSmaller} is {_timed}:
+                    # debugSend({_p}, "new time is lower")
+                    # debugSend({_p}, "new score is %{_scoreText}% &f%{_p}%")
+                    set {_search} to false
+                    set {checkpoint.%{_name}%.highscore::%{_index}%} to "%{_scoreText}% &f%{_p}%"
+                else:
+                    debugSend({_p}, "new time is higher")
+                if {checkpoint.%{_name}%.highscore::%{_index}%} doesn't exist:
+                    # debugSend({_p}, "highscore is not yet full")
+                    # debugSend({_p}, "new score is %{_scoreText}% &f%{_p}%")
+                    set {_search} to false
+                    set {checkpoint.%{_name}%.highscore::%{_index}%} to "%{_scoreText}% &f%{_p}%"                    
+            else:
+                # debugSend({_p}, "moving other scores")
+                set {_tempIndex} to {_index} - 1
+                if {_temp::%{_tempIndex}%} exists:
+                    set {checkpoint.%{_name}%.highscore::%{_index}%} to {_temp::%{_tempIndex}%}
+                else:
+                    set {_iterator} to 20
+
+function displayHighscore(p: player, name: text):
+    set {checkpoint.%{_p}%.displayHighscore} to 15
+    set {checkpoint.%{_p}%.displayHighscore.name} to {_name}
+    set name of sidebar of {_p} to "High Score"
+    loop {checkpoint.%{_name}%.highscore::*}:
+        set {_index} to "%loop-index%" parsed as number
+        set {_number} to 11 - {_index}
+        set {_text} to loop-value
+        if {_index} < 10:
+            set {_text} to "%{_index}%: %{_text}%"
+        else:
+            set {_text} to "+: %{_text}%"
+        set score {_text} in sidebar of {_p} to {_number} 
+
+function clearHighscore(p: player):
+    set {_name} to {checkpoint.%{_p}%.displayHighscore.name}
+    clear {checkpoint.%{_p}%.displayHighscore}
+    clear {checkpoint.%{_p}%.displayHighscore.name}
+    set {_iterator} to 1
+    set {_size} to size of {checkpoint.%{_name}%.highscore::*}
+    while {_iterator} <= 10:
+        set {_text} to {checkpoint.%{_name}%.highscore::%{_iterator}%}
+        set {_index} to {_iterator}
+        add 1 to {_iterator}
+        if {_index} < 10:
+            set {_text} to "%{_index}%: %{_text}%"
+        else:
+            set {_text} to "+: %{_text}%"
+        delete score {_text} in sidebar of {_p}
+    
+function handleFinish(p: player) :: text:
+    debugSend({_p}, "----------" )
+    debugSend({_p}, "handling finish" )
+    debugSend({_p}, "----------" )      
+    if {checkpoint.%{_p}%.boat} exists:
+        set {_boat} to vehicle of {_p}
+        kill {_boat}
+        clear {checkpoint.%{_p}%.boat}
+    
+    
+    
+
+    if {checkpoint.%{_p}%.countdown} is true:
+        if {_formattedTime} contains "-":
+            clearPlayerData({_p})
+            debugSend({_p},"returning &4Failed")
+            set {checkpoint.%{_p}%.justfinished} to 5
+            return "&4Failed"
+        else:
+            clearPlayerData({_p})
+            debugSend({_p},"returning &2Finished")
+            set {checkpoint.%{_p}%.justfinished} to 5
+            return "&2Finished"
+    else:
+        clearPlayerData({_p})
+        debugSend({_p},"returning &2Finished")
+        set {checkpoint.%{_p}%.justfinished} to 5
+        return "&2Finished"
+    
+  
+function effectTags(p: player):
+    #too sleepy to do the time maths.
+    debugSend({_p}, "-----------------------" )
+    debugSend({_p}, "effectTags has started" )
+    set {_actionbarText} to ""
+    set {_titleText} to ""
+    set {_subTitleText} to ""
+#------------    
+    if {region.%{_p}%::boat} exists:
+        if {_p} is not riding a boat:
+            set {_location} to location of {_p}
+            set {_x} to x-coordinate of {_location}
+            set {_y} to y-coordinate of {_location}
+            set {_z} to z-coordinate of {_location}
+            set {_yaw} to yaw of {_location}
+            execute server command "summon boat %{_x}% %{_y}% %{_z}% {Rotation:[%{_yaw}%f,0f]}"
+            set {_boats::*} to boats within 1 meter of {_p}
+            set {_size} to size of {_boats::*}
+            if {_size} is 1:
+                set {_boat} to {_boats::1}
+                make {_p} ride {_boat}
+                set {checkpoint.%{_p}%.boat} to true  
+    if {region.%{_p}%::warp} exists:
+        make {_p} execute "/warp %{region.%{_p}%::warp}%"
+#------------    
+    if {region.%{_p}%::updraft} exists:
+        set {_number} to {region.%{_p}%::updraft}
+        thrust {_p} upwards with speed {_number}
+#------------    
+    if {region.%{_p}%::boost} exists:
+        set {_number} to {region.%{_p}%::boost}
+        thrust {_p} forwards with speed {_number}    
+#------------
+    if {region.%{_p}%::time} exists:
+        set {_formattedTime} to handleTime({_p})
+        set {_formattedOffset} to formatDeltaOffset({_p})
+        if {_subTitleText} is "":
+            set {_subTitleText} to "&6%{_formattedTime}%"
+        else:
+            set {_subTitleText} to "%{_subTitleText}%&5 | &6%{_formattedTime}%"
+        if {_actionbarText} is "":
+            set {_actionbarText} to {_formattedOffset}
+        else:
+            set {_actionbarText} to "%{_actionbarText}%&5 | %{_formattedOffset}%"    
+#------------            
+    if {region.%{_p}%::score} exists:
+        set {_formattedScore} to handleScore({_p})
+        set {_formattedOffset} to formatScoreOffset({_p})
+        if {_subTitleText} is "":
+            set {_subTitleText} to {_formattedScore}
+        else:
+            set {_subTitleText} to "%{_subTitleText}%&5 | %{_formattedScore}%"
+        if {_actionbarText} is "":
+            set {_actionbarText} to {_formattedOffset}
+        else:
+            set {_actionbarText} to "%{_actionbarText}%&5 | %{_formattedOffset}%"   
+#------------             
+    if {region.%{_p}%::finish} exists:
+        if {region.%{_p}%::start} doesn't exist:
+            clearHighscore({_p})
+            handleHighScore({_p},{_subTitleText})
+            displayHighscore({_p}, {checkpoint.%{_p}%.name})
+            set {_titleText} to handleFinish({_p})    
+        else if {region.%{_p}%::finish} is not true:
+            set {_check} to verifyFinish({_p})
+            if {_check} is true:
+                clearHighscore({_p})
+                handleHighScore({_p},{_subTitleText})
+                displayHighscore({_p}, {checkpoint.%{_p}%.name})
+                set {_titleText} to handleFinish({_p})           
+    else if {region.%{_p}%::time} exists:
+        if {checkpoint.%{_p}%.countdown} exists:
+            debugSend({_p},"check for failure")
+            if  {_formattedTime} contains "-":
+                debugSend({_p},"failure detected")
+                set {_titleText} to handleFinish({_p})
+            else:
+                debugSend({_p},"No failure detected, continue as normal")
+    sendTitle({_p},{_titleText},{_subTitleText},{_actionbarText})    
+            
+
+#-------------------------------------------------------------------------------------------------
+# triggers            
+
+every 1 second:
+    loop all players:
+        if {checkpoint.%loop-player%.displayHighscore} exists:
+            subtract 1 from {checkpoint.%loop-player%.displayHighscore}
+            if {checkpoint.%loop-player%.displayHighscore} <= 0:
+                clearHighscore(loop-player)
+        if {checkpoint.%loop-player%.boat} is true:
+            if loop-player is not riding a boat:
+                clear {checkpoint.%loop-player%.boat} 
+        if {checkpoint.%loop-player%.justfinished} exists:
+            subtract 1 from {checkpoint.%loop-player%.justfinished}
+            if {checkpoint.%loop-player%.justfinished} <= 9:
+                debugSend(loop-player,"clearing time out")
+                clear {checkpoint.%loop-player%.justfinished}
+
+on vehicle exit:
+    if {checkpoint.%player%.boat} is true:
+        kill player's vehicle
+        clear {checkpoint.%player%.boat}
+
+            
+on region enter:
+    clear {region.%player%::*}
+    if {checkpoint.%player%.justfinished} doesn't exist:
+        if "%region%" contains "+-+-+":
+            debugSend(player, "-----------------------")
+            debugSend(player, "checkpoint tag detected")
+            set {_unsplit} to "%region%"
+            replace " in world " with "_" in {_unsplit}
+            set {_tagSplit::*} to {_unsplit} split at "_"
+            debugSend(player,"attempting to parse: %{_unsplit}%")
+            parseRegion({_tagSplit::*},player)
+            set {region.%player%::unsplit} to {_unsplit}
+            #does it belong to the same track?
+            set {_check} to compareTrack({region.%player%::name}, {checkpoint.%player%.name})
+            debugSend(player,"comparing stored track to found track")
+            debugSend(player,"stored: %{checkpoint.%player%.name}%")
+            debugSend(player,"found: %{region.%player%::name}%")
+            if {_check} is true:
+                debugSend(player,"checkpoint belongs to the same track")
+                #does it start with start?
+                if {region.%player%::start} exists:
+                    debugSend(player,"checkpoint contains start")
+                    #is finish also present?
+                    if {region.%player%::finish} exists:
+                        debugSend(player,"checkpoint contains finish")
+                        #does finish have a number?
+                        if {region.%player%::finish} is not true:
+                            debugSend(player,"finish is not true")
+                            #verify if finish is next in sequence
+                            set {_verification} to verifyFinish(player)
+                            if {_verification} is true:
+                                debugSend(player,"finish is valid in sequence")
+                                effectTags(player) 
+                            else:
+                                #act the same as if doesn't exist AKA start the same track over
+                                clearPlayerData(player)
+                                initTrack(player)
+                                effectTags(player) 
+                        else:
+                            #act the same as if doesn't exist AKA start the same track over
+                            clearPlayerData(player)
+                            initTrack(player)
+                            effectTags(player) 
+                    else:
+                        #start the same track over
+                        clearPlayerData(player)
+                        initTrack(player)
+                        effectTags(player) 
+                else:
+                #same track but without start
+                    debugSend(player,"checkpoint does not contain start")
+                    set {_verification} to verifySequence(player,{_unsplit})
+                    #is the checkpoint valid as the next in line?
+                    if {_verification} is true:
+                        debugSend(player,"checkpoint is valid in sequence")
+                        effectTags(player) 
+                    else:
+                        sendTitle(player,"&4Wrong Way")
+            else:
+            #not the same track
+                debugSend(player,"checkpoint does not belong to the same track")
+                if {region.%player%::start} exists:
+                    #new track init
+                    clearPlayerData(player)
+                    initTrack(player)
+                    effectTags(player)                 
+        
+                
+command checkpoint <text> <text =""> <text = "">:
+    trigger:
+        set {_command} to "%arg 1%"
+        set {_subcommand} to "%arg 2%"
+        set {_name} to "%arg 3%"
+        if {_command} contains " ":
+            set {_splitCommand::*} to {_command} split at " "
+            set {_command} to {_splitCommand::1}
+            set {_subCommand} to {_splitCommand::2}
+        if {_command} is "debug":
+            if sender has permission "checkpoint.debug":
+                set {_debugPerm} to true
+            else if sender is server:
+                set {_debugPerm} to true
+            else:
+                set {_debugPerm} to false
+                send "c&You do not have permission to use that command"
+            if {_debugPerm} is true:
+                if {debug} doesn't exist:
+                    set {debug} to true
+                    send "Checkpoint debug information &aON"
+                else if {debug} is true:
+                    set {debug} to false
+                    send "Checkpoint debug information &cOFF"            
+                else if {debug} is false:
+                    set {debug} to true
+                    send "Checkpoint debug information &aON" 
+        else if {_command} is "clear":
+            if sender has permission "checkpoint.clear":
+                set {_clearPerm} to true
+            else if sender is server:
+                set {_clearPerm} to true
+            else:
+                set {_clearPerm} to false
+                send "c&You do not have permission to use that command"
+            if {_clearPerm} is true:    
+                if {_subcommand} is "playerdata":
+                    send "Clearing stored data for: %{_name}%"
+                    clearPlayerData({_name})
+                else if {_subcommand} is "highscore":
+                    send "clearing highscore for: %{_name}%"
+                    loop {checkpoint.%{_name}%.highscore::*}:
+                        clear {checkpoint.%{_name}%.highscore::%loop-index%}
+                else:
+                    send "Correct usage: /checkpoint clear <playerdata | highscore> <name>"
+        else if {_command} is "list":
+            if {_subcommand} is "highscore":
+                send "Displaying highscore for: %{_name}%"
+                clearHighscore(player)
+                displayHighscore(player, {_name})
+            else:
+                send "Correct usage: /checkpoint list highscore <name>"
+        else:
+            send "Correct usage: /checkpoint <debug | list | clear> [highscore | playerdata]"
+                
+                
+
+                

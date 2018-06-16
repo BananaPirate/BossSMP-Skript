@@ -1,0 +1,3 @@
+on join:
+    make player execute command "/spawn"
+    

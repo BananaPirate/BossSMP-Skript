@@ -1,0 +1,15 @@
+command /test:
+    trigger:
+        set {_location} to location of player
+        set {_x} to x-coordinate of {_location}
+        set {_y} to y-coordinate of {_location}
+        set {_z} to z-coordinate of {_location}
+        set {_yaw} to yaw of {_location}
+        send "x:%{_x}% y:%{_y}% z:%{_z}% yaw:%{_yaw}%"
+        execute server command "summon boat %{_x}% %{_y}% %{_z}% {Rotation:[%{_yaw}%f,0f]}"
+        set {_boats::*} to boats within 1 meter of the player
+        set {_size} to size of {_boats::*}
+        if {_size} is 1:
+            set {_boat} to {_boats::1}
+            make player ride {_boat}
+        

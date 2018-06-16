@@ -1,0 +1,5 @@
+every 2 seconds:
+    loop all players:
+        if loop-player's y-coordinate is smaller than 0:
+            make loop-player execute "/spawn"
+            message "Pew only just managed to catch you" to loop-player

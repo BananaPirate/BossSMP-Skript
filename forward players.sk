@@ -1,0 +1,6 @@
+on command "/stop":
+    player has permission "skript.stop":
+        Skungee execute bungeecord command "send minigame lobby"
+    sender is console:
+        Skungee execute bungeecord command "send minigame lobby"
+    
