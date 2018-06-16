@@ -1,4 +1,4 @@
 command flagtest:
     trigger:
-        send "%entity at player%"
+        send "%block at player%"
         
