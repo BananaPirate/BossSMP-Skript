@@ -12,5 +12,3 @@ command /test:
         if {_size} is 1:
             set {_boat} to {_boats::1}
             make player ride {_boat}
-        
-test
