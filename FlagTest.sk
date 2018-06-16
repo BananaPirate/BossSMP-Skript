@@ -1,5 +1,5 @@
 command flagtest:
     trigger:
-        send "%raw name of block at player%"
+        send "%name of block at player%"
         send "%damage values of block at player%"
         send "%durability of block at player%"
