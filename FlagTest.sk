@@ -1,0 +1,3 @@
+every 1 second:
+	loop all players:
+		send {block at loop-player} to {loop-player}
