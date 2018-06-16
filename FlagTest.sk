@@ -1,4 +1,4 @@
 command flagtest:
     trigger:
         send "%raw name of block at player%"
-        send "data values of block at player%"
+        send "%data values of block at player%"
