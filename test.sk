@@ -13,3 +13,4 @@ command /test:
             set {_boat} to {_boats::1}
             make player ride {_boat}
         
+test
