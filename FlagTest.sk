@@ -1,3 +1,4 @@
-every 1 second:
-	loop all players:
-		send {block at loop-player} to {loop-player}
+command flagtest:
+    trigger:
+        send {block at sender} to sender
+        
