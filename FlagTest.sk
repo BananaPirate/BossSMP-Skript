@@ -23,9 +23,16 @@ every tick:
 			replace "{" and "}" and """" with "" in {_bannernbt}
 			send {_bannernbt} to loop-player
 			set {_bannertags::*} to {_bannernbt} split at ","
-			set {_customname::*} to {_bannertags::1} split at ":"
-			set {_base::*} to {_bannertags::7} split at ":"
-			send {_customname::2} to loop-player
-			send {_base::2} to loop-player
-			set {_banner} to "black banner item:%{_base::2}%" parsed as item
+			set {_customName} to "flag" 
+			set {_base} to "0"
+			loop {_bannertags::*}:
+				set {_currentTag::*} to {_bannertags::loop-index} split at ":"
+				if {_currentTag::1} is "CustomName":
+					set {_customName} to {_currentTag::2}
+				if {_currentTag::1} is "Base":
+					set {_base} to {_currentTag::2}
+					
+			send {_customName} to loop-player
+			send {_base} to loop-player
+			set {_banner} to "black banner item:%{_base}%" parsed as item
 			set helmet of loop-player to {_banner}
