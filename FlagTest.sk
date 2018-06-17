@@ -4,6 +4,7 @@ command flagtest:
 		send "%location of block at player%"
 		loop all items in the player's inventory:
 			send "type: %type of loop-item%"
+			send "name: %name of loop-item%"
 
 
 on click with a stick:
