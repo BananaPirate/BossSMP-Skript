@@ -2,9 +2,7 @@ command flagtest:
     trigger:
         send "%raw name of block at player%"
         send "%location of block at player%"
+        send "%nbt of block at player%"
         
 on click with a stick:
-	set {_s} to "%nbt of targeted block%"
-	set {_s::*} to {_s} split at """"
-	loop {_s::*}:
-		send loop-value
+	send "%nbt of targeted block%"
