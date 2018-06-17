@@ -18,5 +18,5 @@ every tick:
 			send "standing on banner" to loop-player
 			set {_bannernbt} to nbt of block at loop-player
 			set {_banner} to type of block at loop-player
-			set helmet of loop-player to black_standing_banner_block
+			set helmet of loop-player to blue banner item
 			send "%{_banner}%" to loop-player
