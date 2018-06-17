@@ -27,5 +27,5 @@ every tick:
 			set {_base::*} to {_bannertags::7} split at ":"
 			send {_customname::2} to loop-player
 			send {_base::2} to loop-player
-			set {_colour} to "%{_base::2}%" parsed as integer
-			set helmet of loop-player to "black banner item"
+			set {_banner} to "black banner item:%{_base::2}%" parsed as item
+			set helmet of loop-player to {_banner}
