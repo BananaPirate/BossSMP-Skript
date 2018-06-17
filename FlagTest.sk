@@ -4,7 +4,6 @@ command flagtest:
 		send "%location of block at player%"
 		loop all items in the player's inventory:
 			send "type: %type of loop-item%"
-			
 			send "%loop-item's nbt tags%"
 
 on click with a stick:
@@ -21,4 +20,4 @@ every tick:
 			send "standing on banner" to loop-player
 			set {_bannernbt} to nbt of block at loop-player
 			send "%{_bannernbt}%" to loop-player
-			set helmet of loop-player to black banner item with nbt "%{_bannernbt}%"
+			set helmet of loop-player to black banner item:1
