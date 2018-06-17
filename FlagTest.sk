@@ -2,4 +2,4 @@ command flagtest:
     trigger:
         send "%raw name of block at player%"
         send "%location of block at player%"
-        send "%nbt of block at player%"
+        send "%nbt tag CustomName of block at player%"
