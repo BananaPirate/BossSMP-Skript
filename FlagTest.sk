@@ -18,5 +18,5 @@ every tick:
 		if raw name of block at loop-player is "minecraft:standing_banner":
 			send "standing on banner" to loop-player
 			set {_bannernbt} to nbt of block at loop-player
-			send "%{_bannernbt}%"
+			send "%{_bannernbt}%" to loop-player
 			set helmet of loop-player to black banner item with nbt "%{_bannernbt}%"
