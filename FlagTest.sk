@@ -24,5 +24,7 @@ every tick:
 			send {_bannernbt} to loop-player
 			set {_bannertags::*} to {_bannernbt} split at ","
 			set {_customname::*} to {_bannertags::1} split at ":"
+			set {_base::*} to {_bannertags::7} split at ":"
 			send {_customname::2} to loop-player
+			send {_base::2} to loop-player
 			set helmet of loop-player to black banner item
