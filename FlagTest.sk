@@ -19,4 +19,4 @@ every tick:
 			set {_bannernbt} to nbt of block at loop-player
 			set {_banner} to type of block at loop-player
 			set helmet of loop-player to {_banner}
-			send "%{_banner}%"
+			send "%{_banner}%" to loop-player
