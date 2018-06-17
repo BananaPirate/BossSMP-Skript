@@ -3,5 +3,5 @@ command flagtest:
         send "%raw name of block at player%"
         send "%location of block at player%"
         
-on click:
+on click holding a stick:
 	send "click"
