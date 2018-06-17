@@ -5,4 +5,4 @@ command flagtest:
 
 on click with a stick:
 	set {nbttags} to "%nbt tag of event-block%"
-	send "{nbttags}"
+	send "%{nbttags}%"
