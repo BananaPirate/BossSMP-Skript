@@ -4,6 +4,7 @@ command flagtest:
         send "%location of block at player%"
 
 on click with a stick:
+	send "I spy with my sticky stick:"
 	set {nbttags} to nbt of event-block
 	set {nbttags::*} to {ntbtags} split at ","
 	loop {nbttags::*}:
