@@ -4,5 +4,5 @@ command flagtest:
         send "%location of block at player%"
         
 on click with a stick:
-	send "%nbt of event-block%"
+	send "%event-block's nbt tags%"
 	
