@@ -13,3 +13,6 @@ every tick:
 	loop all players:
 		if raw name of block at loop-player is "minecraft:standing_banner":
 			send "standing on banner" to loop-player
+			set {_bannernbt} to nbt of block
+			set block to air
+			set helmet of loop-player to banner with custom nbt {_bannernbt} 
