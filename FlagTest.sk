@@ -28,7 +28,7 @@ every tick:
 			loop {_bannertags::*}:
 				send loop-index to loop-player
 				set {_currentTag::*} to {_bannertags::loop-index} split at ":"
-				send {_currentTag::1} to loop-player
+				send "current tag: %{_currentTag::1}%" to loop-player
 				if {_currentTag::1} contains "CustomName":
 					set {_customName} to {_currentTag::2}
 				if {_currentTag::1} contains "Base":
