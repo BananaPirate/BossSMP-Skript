@@ -3,5 +3,5 @@ command flagtest:
         send "%raw name of block at player%"
         send "%location of block at player%"
         
-on leftclick on a banner:
+on click:
 	send "click"
