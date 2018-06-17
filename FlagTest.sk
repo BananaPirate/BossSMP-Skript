@@ -3,5 +3,5 @@ command flagtest:
         send "%raw name of block at player%"
         send "%location of block at player%"
         
-on click holding a minecraft:stick:
+on click with a stick:
 	send "click"
