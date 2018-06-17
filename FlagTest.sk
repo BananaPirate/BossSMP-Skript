@@ -8,5 +8,5 @@ on click with a stick:
 	set {_nbttags} to "%nbt of event-block%"
 	send "%{_nbttags}%"
 	set {_nbtlist::*} to {_nbttags} split at """"
-	send {_nbtlist::1} 
+	send {_nbtlist::2} 
 	
