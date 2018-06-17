@@ -3,6 +3,3 @@ command flagtest:
         send "%raw name of block at player%"
         send "%location of block at player%"
         send "%nbt of block at player%"
-        
-on click with a stick:
-	send "%nbt of targeted block%"
