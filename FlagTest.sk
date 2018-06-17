@@ -5,7 +5,7 @@ command flagtest:
 
 on click with a stick:
 	send "I spy with my sticky stick:"
-	set {nbttags} to nbt of event-block
+	set {nbttags} to "%nbt of event-block%"
 	set {nbtlist::*} to {ntbtags} split at ","
 	loop {nbtlist::*}:
 		send "boop"
