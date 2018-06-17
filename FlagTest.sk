@@ -36,7 +36,7 @@ every tick:
 					
 			#send {_customName} to loop-player
 			#send {_base} to loop-player
-			set {_banner} to "black banner item:%{_base} with nbt ""{display{Name: "" ""test"" ""}}""%" parsed as item
+			set {_banner} to "black banner item:%{_base}% %with nbt ""{display{Name:""test""}}""%" parsed as item
 			send "%nbt of {_banner}%" to loop-player
 			set helmet of loop-player to {_banner} 
 			add "{display:""test""}" to nbt of loop-player's helmet
