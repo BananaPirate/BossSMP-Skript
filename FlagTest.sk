@@ -2,6 +2,7 @@ command flagtest:
 	trigger:
 		send "%raw name of block at player%"
 		send "%location of block at player%"
+		give banner to player
 		loop all items in the player's inventory:
 			send raw name of loop-item
 
