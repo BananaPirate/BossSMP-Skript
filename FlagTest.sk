@@ -12,4 +12,4 @@ on click with a stick:
 every 1 second:
 	loop all players:
 		if raw name of block at loop-player is "minecraft:standing_banner":
-			send "standing on banner"
+			send "standing on banner" to loop-player
