@@ -4,5 +4,8 @@ command flagtest:
         send "%location of block at player%"
 
 on click with a stick:
-	set {nbttags} to nbt list of event-block
-	send "%{nbttags}%"
+	set {nbttags} to nbt of event-block
+	set {nbttags::*} to {ntbtags} split at ","
+	for {nbttags::*}:
+		send "%loop-value%"
+	
