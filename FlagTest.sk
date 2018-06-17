@@ -4,4 +4,4 @@ command flagtest:
         send "%location of block at player%"
         
 on click with a stick:
-	send "%type of target-block%"
+	send "%type of event-block%"
