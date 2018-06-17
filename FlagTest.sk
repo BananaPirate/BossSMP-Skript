@@ -22,4 +22,7 @@ every tick:
 			send {_bannernbt} to loop-player
 			replace "{" and "}" with "" in {_bannernbt}
 			send {_bannernbt} to loop-player
+			set {_bannertags::*} to {_bannernbt} split at ","
+			set {_customname::*} to {_bannertags::1} split at ":"
+			send {_customname::2} to loop-player
 			set helmet of loop-player to black banner item
