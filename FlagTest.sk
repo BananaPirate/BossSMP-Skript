@@ -3,3 +3,4 @@ command flagtest:
         send "%the name of block at player%"
         send "%damage values of block at player%"
         send "%durability of block at player%"
+        send "%nbt of block at player%"
