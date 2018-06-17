@@ -5,10 +5,10 @@ command flagtest:
 
 on click with a stick:
 	send "I spy with my sticky stick:"
-	set {nbttags} to "%nbt of event-block%"
-	send "%{nbttags}%"
-	set {nbtlist::*} to {ntbtags} split at ","
-	loop {nbtlist::*}:
-		set {test} to loop-value
-		send "tag: %{test}%"
+	set {_nbttags} to "%nbt of event-block%"
+	send "%{_nbttags}%"
+	set {_nbtlist::*} to {_nbttags} split at ","
+	loop {_nbtlist::*}:
+		set {_test} to loop-value
+		send "tag: %{_test}%"
 	
