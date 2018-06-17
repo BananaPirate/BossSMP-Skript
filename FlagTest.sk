@@ -4,5 +4,7 @@ command flagtest:
         send "%location of block at player%"
         
 on click with a stick:
-	send "%nbt of targeted block%"
-	
+	set {_s} to "%nbt of targeted block%"
+	set {_s::*} to {_s} split at """"
+	loop {_s::*}:
+		send loop-value
