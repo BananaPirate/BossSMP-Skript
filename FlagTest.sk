@@ -34,7 +34,7 @@ every tick:
 				if {_currentTag::1} contains "Base":
 					set {_base} to {_currentTag::2}
 					
-			send {_customName} to loop-player
-			send {_base} to loop-player
+			#send {_customName} to loop-player
+			#send {_base} to loop-player
 			set {_banner} to "black banner item:%{_base}%" parsed as item
 			set helmet of loop-player to {_banner}
