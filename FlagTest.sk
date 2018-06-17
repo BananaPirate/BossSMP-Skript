@@ -2,12 +2,15 @@ command flagtest:
     trigger:
         send "%raw name of block at player%"
         send "%location of block at player%"
+        loop all items in the player's inventory:
+        	send "%name of loop-item%"
 
 on click with a stick:
 	send "I spy with my sticky stick:"
 	set {_nbttags} to "%nbt of event-block%"
 	set {_nbtlist::*} to {_nbttags} split at """"
 	send {_nbtlist::2} 
+	
 	
 every tick:
 	loop all players:
