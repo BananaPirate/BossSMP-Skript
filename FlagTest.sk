@@ -4,4 +4,4 @@ command flagtest:
         send "%block entity of block at player%"
         
 on place of furnace:
-	add "{BurnTime:32767}" to nbt of event-block
+	add "{BurnTime:32767}" to nbt of block
