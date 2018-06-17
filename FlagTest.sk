@@ -6,6 +6,6 @@ command flagtest:
 on click with a stick:
 	set {nbttags} to nbt of event-block
 	set {nbttags::*} to {ntbtags} split at ","
-	for {nbttags::*}:
+	loop {nbttags::*}:
 		send "%loop-value%"
 	
