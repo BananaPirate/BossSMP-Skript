@@ -4,7 +4,7 @@ command flagtest:
 		send "%location of block at player%"
 		loop all items in the player's inventory:
 			send "type: %type of loop-item%"
-			send "%lore of loop-item%"
+
 
 on click with a stick:
 	send "I spy with my sticky stick:"
@@ -38,4 +38,5 @@ every tick:
 			#send {_customName} to loop-player
 			#send {_base} to loop-player
 			set {_banner} to "black banner item:%{_base}%" parsed as item
+			set name of {_banner} to {_customName}
 			set helmet of loop-player to {_banner} with nbt "display:{Name:""tagdata""}"
