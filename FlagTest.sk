@@ -2,7 +2,6 @@ command flagtest:
 	trigger:
 		send "%raw name of block at player%"
 		send "%location of block at player%"
-		give player banner
 		loop all items in the player's inventory:
 			send raw name of loop-item
 
@@ -19,5 +18,4 @@ every tick:
 			send "standing on banner" to loop-player
 			set {_bannernbt} to nbt of block at loop-player
 			set {_banner} to block at loop-player
-			set block at loop-player to air
-			set helmet of loop-player to {_banner}
+			set helmet of loop-player to dirt
