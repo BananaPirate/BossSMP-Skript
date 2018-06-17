@@ -8,6 +8,7 @@ command flagtest:
 on click with a stick:
 	send "I spy with my sticky stick:"
 	set {_nbttags} to "%nbt of event-block%"
+	send {_nbttags}
 	set {_nbtlist::*} to {_nbttags} split at """"
 	send {_nbtlist::2} 
 	
@@ -18,5 +19,5 @@ every tick:
 			send "standing on banner" to loop-player
 			set {_bannernbt} to nbt of block at loop-player
 			set {_banner} to type of block at loop-player
-			set helmet of loop-player to blue banner item
+			set helmet of loop-player to black banner item 
 			send "%{_banner}%" to loop-player
