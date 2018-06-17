@@ -3,8 +3,9 @@ command flagtest:
 		send "%raw name of block at player%"
 		send "%location of block at player%"
 		loop all items in the player's inventory:
-			send "%type of loop-item%"
-			send "%nbt of loop-item%"
+			send "type: %type of loop-item%"
+			set {_itemnbt} to nbt of loop-item
+			send "%{_itemnbt}%"
 
 on click with a stick:
 	send "I spy with my sticky stick:"
