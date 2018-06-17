@@ -4,5 +4,5 @@ command flagtest:
         send "%location of block at player%"
 
 on click with a stick:
-	set {nbttags} to nbt tag "CustonName" of event-block
-	send "%{ntbtags}%"
+	set {nbttags} to nbt tag of event-block
+	send "% ""CustomName"" of {ntbtags}%"
