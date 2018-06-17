@@ -19,16 +19,16 @@ every tick:
 		if raw name of block at loop-player is "minecraft:standing_banner":
 			send "standing on banner" to loop-player
 			set {_bannernbt} to "%nbt of block at loop-player%"
-			send {_bannernbt} to loop-player
+			#send {_bannernbt} to loop-player
 			replace "{" and "}" and """" with "" in {_bannernbt}
-			send {_bannernbt} to loop-player
+			#send {_bannernbt} to loop-player
 			set {_bannertags::*} to {_bannernbt} split at ","
 			set {_customName} to "flag" 
 			set {_base} to "0"
 			loop {_bannertags::*}:
-				send loop-index to loop-player
+				#send loop-index to loop-player
 				set {_currentTag::*} to {_bannertags::%loop-index%} split at ":"
-				send "current tag: %{_currentTag::1}%" to loop-player
+				#send "current tag: %{_currentTag::1}%" to loop-player
 				if {_currentTag::1} contains "CustomName":
 					set {_customName} to {_currentTag::2}
 				if {_currentTag::1} contains "Base":
