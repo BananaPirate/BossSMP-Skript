@@ -7,17 +7,17 @@ command join minigame <text>:
 		
 command register minigame <text> <text>:
 	trigger:
-		set {_name} to parseArguments(arg 1, arg 2)
+		set {_name} to parseArguments(arg 1, arg 2, sender)
 		send {_name} to sender
 		
-function parseArguments(a1: text, a2: text) :: text:
+function parseArguments(a1: text, a2: text, p: player) :: text:
 	set {_a2words::*} to {_a2} split at " "
 	set {_words::1} to {_a1}
 	set {_iterator} to 1
 	#while {_iterator} < size of {_a2words::*} - 1:
 	#	set {_words::%{_iterator}% + 1} to {_a2words::%{_iterator}%}
 	#	set {_iterator} to {_interator} + 1
-	send "%size of {_a2words::*}%" to "BananaPirate"
+	send "%size of {_a2words::*}%" to {_p}
 	set {_name} to join {_words::*} with " "
 	return {_name}
 		
