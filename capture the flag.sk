@@ -1,4 +1,4 @@
-on command set minigame <text> <text>:
+on command minigame <text> <text>:
 	trigger:
 		set {_type} to "%arg 1%"
 		set {_name} to "%arg 2%"
