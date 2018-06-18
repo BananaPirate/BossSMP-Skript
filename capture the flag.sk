@@ -15,6 +15,6 @@ function parseArguments({_a1}: text, _a2: text) :: text:
 	set {_words::1} to {_a1}
 	set {_iterator} to 1
 	while {_iterator} < size of {_a2words::*} - 1:
-		set {_words::%{_iterator} + 1%} to {_a2words::%{_iterator}%}
+		set {_words::%{_iterator}% + 1} to {_a2words::%{_iterator}%}
 		set {_iterator} to {_interator} + 1
 	return join {_words::*} with " "	
