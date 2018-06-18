@@ -1,22 +1,15 @@
-command join minigame <text>:
+command mini join <text>:
 	trigger:
 		set {_type} to arg 1
 		send {_type}  to sender
 		set {_player_name} to name of sender
 		set {minigame.%{_player_name}%.%{_type}%} to {_type}
 		
-command register minigame ctf <text>:
+command mini register <text>:
 	trigger:
-		set {_name} to arg 1
-		if {minigame.ctf.%{_name}%.name} is not set:
-			set {minigame.ctf.%{_name}%.name} to {_name}
-			send "registered ""%{minigame.ctf.%{_name}%.name}%""" to sender
-		else:
-			send """%{minigame.ctf.%{_name}%.name}%"" has already been registered" to sender
-			
-command register ctf flag <text> <text>:
-	trigger:
-		send arg 1 to sender
-		send arg 2 to sender		
+		set {_command::*} to arg 1 parsed as "ctf %text%" 
+		if parse error is not set:
+			send {_command::1} to sender
+		
 
 		
