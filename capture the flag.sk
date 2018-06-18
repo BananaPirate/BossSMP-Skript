@@ -7,7 +7,7 @@ command join minigame <text>:
 		
 command register minigame <text> <text>:
 	trigger:
-		set {_name} to parseArguments(arg 1, arg 2)
+		set {_name} to parseArguments(%arg 1%, %arg 2%)
 		send {_name} to sender
 		
 function parseArguments({_a1}: text, _a2: text) :: text:
