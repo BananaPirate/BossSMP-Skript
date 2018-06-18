@@ -14,6 +14,9 @@ command register minigame ctf <text>:
 		else:
 			send """%{minigame.ctf.%{_name}%.name}%"" has already been registered" to sender
 			
-		
+command register ctf flag <text> <text>:
+	trigger:
+		send arg 1 to sender
+		send arg 2 to sender		
 
 		
