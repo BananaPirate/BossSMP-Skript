@@ -8,4 +8,4 @@ command mini <text>:
 		if {_command::1} is set:
 			send "join trigger: join ctf %{_command::1}%" to sender
 			exit
-		
+		send "Correct usage: /mini [register|join] [ctf] [game name]"
