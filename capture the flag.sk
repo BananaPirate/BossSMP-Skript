@@ -4,6 +4,17 @@ command join minigame <text>:
 		send {_type}  to sender
 		set {_player_name} to name of sender
 		set {minigame.%{_player_name}%.%{_type}%} to {_type}
-		send {minigame.%{_player.name}%.%{_type}%} to sender
 		
+command register minigame <text> <text>:
+	trigger:
+		set {_name} to parseArguments(arg 1, arg 2)
+		send {_name} to sender
 		
+function parseArguments(a1: text, a2: text):
+	set {_a2words::*} to a2 split at " "
+	set {_words::1} to a1
+	set {_iterator} to 1
+	while {_iterator} < size of {_a2words::*} - 1:
+		set {_words::{_iterator}} to {_a2words::{_iterator}}
+		set {_iterator} to {_interator} + 1
+	return join {_words::*} with " "	
