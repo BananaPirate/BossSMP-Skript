@@ -2,7 +2,7 @@ command join minigame <text>:
 	trigger:
 		set {_type} to arg 1
 		send {_type}  to sender
-		set {_player_name} to name of sender to sender
+		set {_player_name} to name of sender
 		set {minigame.%{_player_name}%.%{_type}%} to {_type}
 		send {minigame.%{_player.name}%.%{_type}%} to sender
 		
