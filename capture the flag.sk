@@ -5,18 +5,11 @@ command join minigame <text>:
 		set {_player_name} to name of sender
 		set {minigame.%{_player_name}%.%{_type}%} to {_type}
 		
-command register minigame <text> <text>:
+command register minigame ctf <text>:
 	trigger:
-		set {_name} to parseArguments(arg 1, arg 2, sender)
-		send {_name} to sender
+		set {_name} to arg 1
+		set {minigame.ctf.%{_name}%}.name} to {_name}
+		 
 		
-function parseArguments(a1: text, a2: text, p: player) :: text:
-	set {_a2words::*} to {_a2} split at " "
-	set {_words::1} to {_a1}
-	set {_iterator} to 1
-	while {_iterator} < size of {_a2words::*} - 1:
-		set {_words::%{_iterator}% + 1} to {_a2words::%{_iterator}%}
-		set {_iterator} to {_iterator} + 1
-	set {_name} to join {_words::*} with " "
-	return {_name}
+
 		
