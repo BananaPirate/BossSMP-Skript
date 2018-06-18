@@ -1,10 +1,3 @@
-command mini join <text>:
-	trigger:
-		set {_type} to arg 1
-		send {_type}  to sender
-		set {_player_name} to name of sender
-		set {minigame.%{_player_name}%.%{_type}%} to {_type}
-		
 command mini register <text>:
 	trigger:
 		set {_command::*} to arg 1 parsed as "ctf %text%" 
