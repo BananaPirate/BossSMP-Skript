@@ -8,9 +8,12 @@ command join minigame <text>:
 command register minigame ctf <text>:
 	trigger:
 		set {_name} to arg 1
-		set {minigame.ctf.%{_name}%.name} to {_name}
-		send "registered %{minigame.ctf.%{_name}%.name}%" to sender
-		 
+		if {minigame.ctf.%{_name}%.name} is not set:
+			set {minigame.ctf.%{_name}%.name} to {_name}
+			send "registered %{minigame.ctf.%{_name}%.name}%" to sender
+		else:
+			send "%{minigame.ctf.%{_name}%.name}%" has already been registered" to sender
+			
 		
 
 		
