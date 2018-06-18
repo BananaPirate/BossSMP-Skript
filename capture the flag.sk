@@ -1,8 +1,11 @@
-command mini register <text>:
+command mini <text>:
 	trigger:
-		set {_command::*} to arg 1 parsed as "ctf %text%" 
+		set {_command::*} to arg 1 parsed as "register ctf %text%" 
 		if parse error is not set:
-			send {_command::1} to sender
-		
-
+			send "register ctf %{_command::1}%" to sender
+			exit
+		set {_command::*} to arg 1 parsed as "join ctf %text%
+		if parse error is not set:
+			send "join ctf  %{_command::1}%" to sender
+			exit
 		
