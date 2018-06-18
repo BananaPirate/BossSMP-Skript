@@ -12,7 +12,7 @@ command register minigame ctf <text>:
 			set {minigame.ctf.%{_name}%.name} to {_name}
 			send "registered %{minigame.ctf.%{_name}%.name}%" to sender
 		else:
-			send "%{minigame.ctf.%{_name}%.name}%" has already been registered" to sender
+			send "%{minigame.ctf.%{_name}%.name}% has already been registered" to sender
 			
 		
 
