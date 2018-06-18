@@ -10,9 +10,9 @@ command register minigame <text> <text>:
 		set {_name} to parseArguments(arg 1, arg 2)
 		send {_name} to sender
 		
-function parseArguments(a1: text, a2: text) :: text:
-	set {_a2words::*} to a2 split at " "
-	set {_words::1} to a1
+function parseArguments({_a1}: text, _a2: text) :: text:
+	set {_a2words::*} to {_a2} split at " "
+	set {_words::1} to {_a1}
 	set {_iterator} to 1
 	while {_iterator} < size of {_a2words::*} - 1:
 		set {_words::{_iterator}} to {_a2words::{_iterator}}
