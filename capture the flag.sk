@@ -1,5 +1,4 @@
-command set minigame <text> <text>:
+command join minigame <text>:
 	trigger:
 		set {_type} to "%arg 1%"
-		set {_name} to "%arg 2%"
-		send "%{_type}% : %{_name}%" to sender
+		send "%{_type}%  to sender
